@@ -1,1 +1,2 @@
 psycopg2==2.7.5
+prettytable==0.7.2

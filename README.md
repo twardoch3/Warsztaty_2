@@ -32,7 +32,7 @@ python3 manage_users.py -u USERNAME -p PASSWORD
 ```
 send message:
 ```
-python3 send_messages.py -u USERNAME -p PASSWORD -t TO -s SEND
+python3 send_messages.py -u USERNAME -p PASSWORD -t TO(user) -s SEND(message)
 
 ```
 users/messages list:

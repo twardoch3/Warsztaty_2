@@ -1,8 +1,17 @@
 # Warsztaty_2 -Database module - Message server
-Application allows to send messages between users and manage them (add, edit or delete users).
+This project is a simple communication app that allows a user to create account (also edit or delete account) and send messages to other users.
 ### Requirements
 Program requires PostgreSQL database and python3.
 ### Installing
+Connection info (src/db_run/__init__.py): 
+```
+class DB:
+    username = "postgres"
+    passwd = "coderslab"
+    hostname = "localhost"
+    db = "warsztaty_db"
+```
+
 Run create_db.py file to create database with tables for users and messages.
 ```
 python3 create_db.py

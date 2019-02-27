@@ -1,8 +1,5 @@
 #testowanie
 import unittest
-#from manage_users import users_list
-from db_run import DB
-from models import User
 from clcrypto import generate_salt, password_hash, check_password
 
 

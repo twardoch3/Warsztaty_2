@@ -3,7 +3,7 @@ import unittest
 #from manage_users import users_list
 from db_run import DB
 from models import User
-from clcrypto import generate_salt, password_hash
+from clcrypto import generate_salt, password_hash, check_password
 
 
 class Test_1(unittest.TestCase):
@@ -41,6 +41,16 @@ class Test_1(unittest.TestCase):
         self.assertNotIn(';', password_hash(self.password, salt=self.salt2))
         self.assertEqual(password_hash(self.password, salt=self.salt2)[10:15],self.salt2[10:15])
         self.assertNotEqual(password_hash(self.password, salt=self.salt2)[16:l], self.salt2[16:l])
+
+    def test_pswd_check(self):
+        self.assertFalse(check_password('pass1234', 'a3ed5ed2bc5fe39ceac31aa989f7008e'))
+        self.assertTrue(check_password('pass1','666777DEFGaa88990f5bd282ac89105f24e6ba85e1eb4c3ed417aecd5d223fc753a9d3ab6ec87178'))
+
+    def test_exceptions(self):
+        with self.assertRaises(Exception):
+            password_hash()
+        with self.assertRaises(Exception):
+            check_password()
 
 
 

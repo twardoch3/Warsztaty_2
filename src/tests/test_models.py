@@ -1,5 +1,6 @@
 import unittest
 from models import User
+from db_run import DB
 
 
 class Test_2(unittest.TestCase):
@@ -18,6 +19,31 @@ class Test_2(unittest.TestCase):
         hash2 = '666777DEFGaa88990f5bd282ac89105f24e6ba85e1eb4c3ed417aecd5d223fc753a9d3ab6ec87178'
         self.user.hashed_password = {'password': 'pass1', 'salt': hash2[:16]}
         self.assertEqual(self.user.hashed_password, hash2)
+
+class Test_2_DB(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.user = User()
+        cls.user.username = 'userA111'
+        cls.user.email = 'user11@gmail.com'
+        cls.user.hashed_password = {'password': 'pas23', 'salt': 'er445'}
+        cls.db = DB()
+
+
+    def test_add_user_db(self):
+        connection = self.db.connect_db()
+        with self.db.db_cursor(connection) as curs:
+            result = self.user.save_to_db(curs)
+            self.assertTrue(result)
+            #dodac update load, delete
+        connection.commit()
+        connection.close()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.user = None
+        #db ??
 
 
 

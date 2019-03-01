@@ -31,19 +31,35 @@ class Test_2_DB(unittest.TestCase):
         cls.db = DB()
 
 
-    def test_add_user_db(self):
+    def test_user_db(self):
         connection = self.db.connect_db()
         with self.db.db_cursor(connection) as curs:
-            result = self.user.save_to_db(curs)
-            self.assertTrue(result)
-            #dodac update load, delete
+            #save
+            save = self.user.save_to_db(curs)
+            self.assertTrue(save)
+            #load
+            loaded_user = self.user.load_user_by_username(curs, self.user.username)
+            self.assertTrue(loaded_user)
+            self.assertEqual(loaded_user.username, self.user.username)
+            self.assertEqual(loaded_user.email, self.user.email)
+            #self.assertEqual(loaded_user.hashed_password, self.user.hashed_password)
+            self.assertNotEqual(loaded_user.id, -1)
+            #update
+            loaded_user.hashed_password = {'password': 'xxx123', 'salt': None}
+            #print(loaded_user.hashed_password)
+            self.assertTrue(loaded_user.save_to_db(curs))  #update/change password
+            self.assertEqual(loaded_user.hashed_password, (User.load_user_by_username(curs, loaded_user.username)).hashed_password)
+            #delete
+            self.assertTrue(loaded_user.delete(curs))
+            self.assertFalse(User.load_user_by_username(curs, loaded_user.username))
+
         connection.commit()
         connection.close()
 
     @classmethod
     def tearDownClass(cls):
         cls.user = None
-        #db ??
+        cls.db = None
 
 
 

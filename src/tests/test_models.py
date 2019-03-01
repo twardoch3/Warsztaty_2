@@ -20,6 +20,10 @@ class Test_2(unittest.TestCase):
         self.user.hashed_password = {'password': 'pass1', 'salt': hash2[:16]}
         self.assertEqual(self.user.hashed_password, hash2)
 
+    @classmethod
+    def tearDownClass(cls):
+        cls.user = None
+
 class Test_2_DB(unittest.TestCase):
 
     @classmethod
@@ -60,8 +64,6 @@ class Test_2_DB(unittest.TestCase):
     def tearDownClass(cls):
         cls.user = None
         cls.db = None
-
-
 
 
 

@@ -73,15 +73,15 @@ class Test_2_DB_all_users(unittest.TestCase):
     def setUp(self):
         self.db = DB()
         self.connection = self.db.connect_db()
-        # with self.db.db_cursor(self.connection) as curs:
-        #     for i in range(10):
-        #         self.u = User()
-        #         self.u.username = 'user' + ('').join(random.choices(ALPHABET, k=3))
-        #         self.u.email = str(self.u.username) + '@email.com'
-        #         self.u.hashed_password = {'password': ('').join(random.choices(ALPHABET, k=6)), 'salt': None}
-        #         #save
-        #         save = self.u.save_to_db(curs)
-        #     self.connection.commit()
+        with self.db.db_cursor(self.connection) as curs:
+            for i in range(10):
+                self.u = User()
+                self.u.username = 'user' + ('').join(random.choices(ALPHABET, k=3))
+                self.u.email = str(self.u.username) + '@email.com'
+                self.u.hashed_password = {'password': ('').join(random.choices(ALPHABET, k=6)), 'salt': None}
+                #save
+                save = self.u.save_to_db(curs)
+            self.connection.commit()
 
 
     def test_load_all_users(self):
@@ -95,12 +95,14 @@ class Test_2_DB_all_users(unittest.TestCase):
 
 
     def tearDown(self):
+        with self.db.db_cursor(self.connection) as curs:
+            all_users = User.load_all_users(curs)
+            for u in all_users:
+                u.delete(curs)
+                self.connection.commit()
+
         self.connection.close()
         print(self.connection)
-
-
-
-
 
 
 

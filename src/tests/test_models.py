@@ -1,6 +1,8 @@
 import unittest
 from models import User
 from db_run import DB
+from clcrypto import ALPHABET
+import random
 
 
 class Test_2(unittest.TestCase):
@@ -64,6 +66,32 @@ class Test_2_DB(unittest.TestCase):
     def tearDownClass(cls):
         cls.user = None
         cls.db = None
+
+
+class Test_2_DB_all_users(unittest.TestCase):
+
+    def setUp(self):
+        self.db = DB()
+        self.connection = self.db.connect_db()
+        with self.db.db_cursor(self.connection) as curs:
+            for i in range(10):
+                self.u = User()
+                self.u.username = 'user' + ('').join(random.choices(ALPHABET, k=3))
+                self.u.email = str(self.u.username) + '@email.com'
+                self.u.hashed_password = {'password': ('').join(random.choices(ALPHABET, k=6)), 'salt': None}
+                #save
+                save = self.u.save_to_db(curs)
+            self.connection.commit()
+
+
+    def test_load_all_users(self):
+        pass #self.assertIsInstance()
+
+    def tearDown(self):
+        pass
+
+
+
 
 
 

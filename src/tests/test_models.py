@@ -1,5 +1,5 @@
 import unittest
-from models import User
+from models import User, Message
 from db_run import DB
 from clcrypto import ALPHABET
 import random
@@ -105,9 +105,23 @@ class Test_2_DB_all_users(unittest.TestCase):
         print(self.connection)
 
 
+class Test_3_message(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.message = Message()
+
+    def test_id(self):
+        self.assertEqual(self.message.id, -1)
+
+    @classmethod
+    def tearDownClass(cls):
+        del cls.message
+
+
+
+
 if __name__ == '__main__':
     unittest.main()
 
 
-# u1 = User()
-# u1.hashed_password = {'password': 'pas23', 'salt': 'er445'}

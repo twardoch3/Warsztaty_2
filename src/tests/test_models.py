@@ -64,8 +64,8 @@ class Test_2_DB(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.user = None
-        cls.db = None
+        del cls.user
+        del cls.db
 
 
 class Test_2_DB_all_users(unittest.TestCase):
@@ -103,7 +103,6 @@ class Test_2_DB_all_users(unittest.TestCase):
 
         self.connection.close()
         print(self.connection)
-
 
 
 if __name__ == '__main__':

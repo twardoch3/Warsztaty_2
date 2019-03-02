@@ -109,14 +109,48 @@ class Test_3_message(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.message = Message()
+        cls.db = DB()
+        cls.connection = cls.db.connect_db()
+        cls.ids = []
+        with cls.db.db_cursor(cls.connection) as curs:
+            for i in range(2):
+                u = User()
+                u.username = 'user' + ('').join(random.choices(ALPHABET, k=3))
+                u.email = str(u.username) + '@email.com'
+                u.hashed_password = {'password': ('').join(random.choices(ALPHABET, k=6)), 'salt': None}
+                u.save_to_db(curs)
+                cls.ids.append(u.load_user_by_username(curs, u.username).id)  #user ids
+            cls.connection.commit()
+
+    def setUp(self):
+        self.message = Message()
+        self.message.from_id = self.ids[0]
+        self.message.to_id = self.ids[1]
+        self.message.text = 'test message 1'
+        #self.message.date
 
     def test_id(self):
         self.assertEqual(self.message.id, -1)
 
+    def test_add_message(self):
+        with self.db.db_cursor(self.connection) as curs:
+             save = self.message.save_to_db(curs)
+             self.connection.commit()
+        self.assertTrue(save)
+        print(self.connection)
+
+    def tearDown(self):
+        del self.message
+
+
+    #def test_delete_message
+    #def test_load_message_by_id
+
     @classmethod
     def tearDownClass(cls):
-        del cls.message
+        #usunac message i users
+        cls.connection.close()
+        #poprawic
 
 
 

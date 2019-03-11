@@ -112,7 +112,8 @@ class Test_3_message(unittest.TestCase):
         cls.db = DB()
         cls.connection = cls.db.connect_db()
         cls.ids = []
-        #cls.msg_id = []
+        cls.msg_id = []
+        #cls.unames = []
         with cls.db.db_cursor(cls.connection) as curs:
             for i in range(2):
                 u = User()
@@ -139,31 +140,44 @@ class Test_3_message(unittest.TestCase):
         with self.db.db_cursor(self.connection) as curs:
              save = self.message.save_to_db(curs)
              self.connection.commit()
-             #self.msg_id.append(self.message.id) # append zmienia zmienna klasowa cls.msg_id = []
+             self.msg_id.append(self.message.id) # append zmienia zmienna klasowa cls.msg_id = []
              self.assertTrue(save)
              # load message by id
-             load = self.message.load_message_by_id(curs, self.message.id)
-             self.assertIsInstance(load, Message)
+             loaded_message = self.message.load_message_by_id(curs, self.message.id)
+             print(loaded_message.text)
+             self.assertIsInstance(loaded_message, Message)
+             self.assertEqual(loaded_message.text, self.message.text)
+             self.assertEqual(loaded_message.from_id, self.message.from_id)
+             self.assertEqual(loaded_message.to_id, self.message.to_id)
 
 
+    def test_delete_message(self):
+        with self.db.db_cursor(self.connection) as curs:
+            loaded_message = self.message.load_message_by_id(curs, self.msg_id[0])
+            self.assertIsInstance(loaded_message, Message)
+            delete = loaded_message.delete(curs)
+            self.connection.commit()
+            self.assertTrue(delete)
+            self.assertFalse(self.message.load_message_by_id(curs, self.message.id))
 
-    # def test_delete_message(self):
-    #     pass
 
-    # def tearDown(self):
-    #     del self.message
+    def tearDown(self):
+         del self.message
 
 
     @classmethod
     def tearDownClass(cls):
         #usunac message i users
+
+
         cls.connection.close()
         print(cls.connection)
-        #poprawic
 
 
 
 if __name__ == '__main__':
     unittest.main()
+
+
 
 

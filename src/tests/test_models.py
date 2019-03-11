@@ -112,6 +112,7 @@ class Test_3_message(unittest.TestCase):
         cls.db = DB()
         cls.connection = cls.db.connect_db()
         cls.ids = []
+        cls.msg_id = []
         with cls.db.db_cursor(cls.connection) as curs:
             for i in range(2):
                 u = User()
@@ -122,36 +123,44 @@ class Test_3_message(unittest.TestCase):
                 cls.ids.append(u.load_user_by_username(curs, u.username).id)  #user ids
             cls.connection.commit()
 
+
     def setUp(self):
         self.message = Message()
         self.message.from_id = self.ids[0]
         self.message.to_id = self.ids[1]
         self.message.text = 'test message 1'
+        # print(cls.message.id)
         #self.message.date
 
     def test_id(self):
         self.assertEqual(self.message.id, -1)
 
-    def test_add_message(self):
+    def test_add_load_message(self):
         with self.db.db_cursor(self.connection) as curs:
              save = self.message.save_to_db(curs)
              self.connection.commit()
-        self.assertTrue(save)
-        print(self.connection)
+             self.msg_id.append(self.message.id)
+             print(self.msg_id)
+             self.assertTrue(save)
+             # load message by id
+             load = self.message.load_message_by_id(curs, self.msg_id[0])  # append zmienia zmienna klasowa cls.msg_id = []
+             self.assertIsInstance(load, Message)
 
-    def tearDown(self):
-        del self.message
 
 
-    #def test_delete_message
-    #def test_load_message_by_id
+    # def test_delete_message(self):
+    #     pass
+
+    # def tearDown(self):
+    #     del self.message
+
 
     @classmethod
     def tearDownClass(cls):
         #usunac message i users
         cls.connection.close()
+        print(cls.connection)
         #poprawic
-
 
 
 

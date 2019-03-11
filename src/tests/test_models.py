@@ -113,7 +113,7 @@ class Test_3_message(unittest.TestCase):
         cls.connection = cls.db.connect_db()
         cls.ids = []
         cls.msg_id = []
-        #cls.unames = []
+        cls.unames = []
         with cls.db.db_cursor(cls.connection) as curs:
             for i in range(2):
                 u = User()
@@ -122,6 +122,7 @@ class Test_3_message(unittest.TestCase):
                 u.hashed_password = {'password': ('').join(random.choices(ALPHABET, k=6)), 'salt': None}
                 u.save_to_db(curs)
                 cls.ids.append(u.load_user_by_username(curs, u.username).id)  #user ids
+                cls.unames.append(u.username)
             cls.connection.commit()
 
 
@@ -167,9 +168,11 @@ class Test_3_message(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        #usunac message i users
-
-
+        with cls.db.db_cursor(cls.connection) as curs:
+            for uname in cls.unames:
+                user = User.load_user_by_username(curs, uname)
+                user.delete(curs)
+                cls.connection.commit()
         cls.connection.close()
         print(cls.connection)
 

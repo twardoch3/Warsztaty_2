@@ -26,7 +26,7 @@ class Test_2(unittest.TestCase):
     def tearDownClass(cls):
         cls.user = None
 
-class Test_2_DB(unittest.TestCase):
+class Test_2_DB_user(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -105,7 +105,7 @@ class Test_2_DB_all_users(unittest.TestCase):
         print(self.connection)
 
 
-class Test_3_message(unittest.TestCase):
+class Test_3_message_DB(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -176,6 +176,18 @@ class Test_3_message(unittest.TestCase):
         cls.connection.close()
         print(cls.connection)
 
+
+class Test_3_all_messages_DB(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        pass #dodac userow i wiadomosci
+
+    def test_load_all_messages(self):
+        pass
+
+    def test_load_all_messages_for_user(self):
+        pass
 
 
 if __name__ == '__main__':

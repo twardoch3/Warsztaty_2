@@ -112,7 +112,7 @@ class Test_3_message(unittest.TestCase):
         cls.db = DB()
         cls.connection = cls.db.connect_db()
         cls.ids = []
-        cls.msg_id = []
+        #cls.msg_id = []
         with cls.db.db_cursor(cls.connection) as curs:
             for i in range(2):
                 u = User()
@@ -139,11 +139,10 @@ class Test_3_message(unittest.TestCase):
         with self.db.db_cursor(self.connection) as curs:
              save = self.message.save_to_db(curs)
              self.connection.commit()
-             self.msg_id.append(self.message.id)
-             print(self.msg_id)
+             #self.msg_id.append(self.message.id) # append zmienia zmienna klasowa cls.msg_id = []
              self.assertTrue(save)
              # load message by id
-             load = self.message.load_message_by_id(curs, self.msg_id[0])  # append zmienia zmienna klasowa cls.msg_id = []
+             load = self.message.load_message_by_id(curs, self.message.id)
              self.assertIsInstance(load, Message)
 
 

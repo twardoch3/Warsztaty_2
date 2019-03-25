@@ -139,6 +139,7 @@ class Test_3_message_DB(unittest.TestCase):
 
     def test_add_load_message(self):
         with self.db.db_cursor(self.connection) as curs:
+             #add message
              save = self.message.save_to_db(curs)
              self.connection.commit()
              self.msg_id.append(self.message.id) # append zmienia zmienna klasowa cls.msg_id = []
@@ -181,13 +182,37 @@ class Test_3_all_messages_DB(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        pass #dodac userow i wiadomosci
+        cls.db = DB()
+        cls.connection = cls.db.connect_db()
+        cls.ids = []
+        #cls.msg_id = []
+        #cls.unames = []
+        with cls.db.db_cursor(cls.connection) as curs:
+            #create temporary users
+            for i in range(3):
+                u = User()
+                u.username = 'user' + ('').join(random.choices(ALPHABET, k=3))
+                u.email = str(u.username) + '@email.com'
+                u.hashed_password = {'password': ('').join(random.choices(ALPHABET, k=6)), 'salt': None}
+                u.save_to_db(curs)
+                cls.ids.append(u.load_user_by_username(curs, u.username).id)  #user ids
+                cls.unames.append(u.username)
+            cls.connection.commit()
+            #create temporary messages
+            # for i in range(3):
+            #     pass
+
 
     def test_load_all_messages(self):
         pass
 
     def test_load_all_messages_for_user(self):
         pass
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.connection.close()
+
 
 
 if __name__ == '__main__':

@@ -184,9 +184,9 @@ class Test_3_all_messages_DB(unittest.TestCase):
     def setUpClass(cls):
         cls.db = DB()
         cls.connection = cls.db.connect_db()
-        cls.ids = []
-        #cls.msg_id = []
-        #cls.unames = []
+        cls.u_ids = []
+        cls.msg_id = []
+        cls.unames = []
         with cls.db.db_cursor(cls.connection) as curs:
             #create temporary users
             for i in range(3):
@@ -195,22 +195,44 @@ class Test_3_all_messages_DB(unittest.TestCase):
                 u.email = str(u.username) + '@email.com'
                 u.hashed_password = {'password': ('').join(random.choices(ALPHABET, k=6)), 'salt': None}
                 u.save_to_db(curs)
-                cls.ids.append(u.load_user_by_username(curs, u.username).id)  #user ids
+                cls.u_ids.append(u.load_user_by_username(curs, u.username).id)  #user ids
                 cls.unames.append(u.username)
             cls.connection.commit()
             #create temporary messages
-            # for i in range(3):
-            #     pass
+            for i in range(3):
+                message = Message()
+                message.from_id = random.choice(cls.u_ids)
+                message.to_id = random.choice(cls.u_ids)
+                message.text = 'test message ' + ('').join(random.choices(ALPHABET, k=6))
+                # print(cls.message.id)
+                # self.message.date !
+                save = message.save_to_db(curs)
+                cls.connection.commit()
+                cls.msg_id.append(message.id)  # append zmienia zmienna klasowa cls.msg_id = []
+            print(cls.msg_id)
 
+    def setUp(self):
+        self.message = Message()
 
     def test_load_all_messages(self):
-        pass
+        with self.db.db_cursor(self.connection) as curs:
+            all_messages = self.message.load_all_messages(curs)
+            self.assertIsInstance(all_messages, list)
+            self.assertEqual(len(all_messages), 3)
+            self.assertIn(all_messages[0].id, self.msg_id)
+            self.assertIsInstance(all_messages[1], Message)
+            #self.assertIn(all_messages[5].id, self.msg_id)
+
 
     def test_load_all_messages_for_user(self):
         pass
 
+    def tearDown(self):
+        del self.message
+
     @classmethod
     def tearDownClass(cls):
+        #
         cls.connection.close()
 
 

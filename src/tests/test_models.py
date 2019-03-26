@@ -186,7 +186,7 @@ class Test_3_all_messages_DB(unittest.TestCase):
         cls.connection = cls.db.connect_db()
         cls.u_ids = []
         cls.msg_id = []
-        #cls.u1_name = None
+        cls.unames = []
         with cls.db.db_cursor(cls.connection) as curs:
             #create temporary users
             for i in range(5):
@@ -196,8 +196,7 @@ class Test_3_all_messages_DB(unittest.TestCase):
                 u.hashed_password = {'password': ('').join(random.choices(ALPHABET, k=6)), 'salt': None}
                 u.save_to_db(curs)
                 cls.u_ids.append(u.load_user_by_username(curs, u.username).id)  #user ids
-                if not i:
-                    cls.u1_name = u.username
+                cls.unames.append(u.username)
             cls.connection.commit()
             #create temporary messages
             for i in range(5):
@@ -210,6 +209,7 @@ class Test_3_all_messages_DB(unittest.TestCase):
                 save = message.save_to_db(curs)
                 cls.connection.commit()
                 cls.msg_id.append(message.id)  # append zmienia zmienna klasowa cls.msg_id = []
+            # User 1 messages
             for i in range(5):
                 message = Message()
                 message.from_id = random.choice(cls.u_ids)
@@ -238,9 +238,10 @@ class Test_3_all_messages_DB(unittest.TestCase):
     def test_load_all_messages_for_user(self):
         with self.db.db_cursor(self.connection) as curs:
             #User 1
-            u1_messages = self.message.load_all_messages_for_user(curs, self.u1_name)
+            u1_messages = self.message.load_all_messages_for_user(curs, self.unames[0])
             self.assertIsInstance(u1_messages, list)
             self.assertEqual(len(u1_messages), 5)
+            #sprawdzic moze to w peltli...
             self.assertEqual(u1_messages[0].to_id, self.u_ids[0])
             self.assertEqual(u1_messages[4].to_id, self.u_ids[0])
 
@@ -250,8 +251,14 @@ class Test_3_all_messages_DB(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        #
+        #delete messages and users
+        with cls.db.db_cursor(cls.connection) as curs:
+            for uname in cls.unames:
+                user = User.load_user_by_username(curs, uname)
+                user.delete(curs)  #on delete cascade usuwa tez messages
+                cls.connection.commit()
         cls.connection.close()
+
 
 
 

@@ -242,8 +242,8 @@ class Test_3_all_messages_DB(unittest.TestCase):
             self.assertIsInstance(u1_messages, list)
             self.assertEqual(len(u1_messages), 5)
             #sprawdzic moze to w peltli...
-            self.assertEqual(u1_messages[0].to_id, self.u_ids[0])
-            self.assertEqual(u1_messages[4].to_id, self.u_ids[0])
+            for i in range(len(u1_messages)):
+                self.assertEqual(u1_messages[i].to_id, self.u_ids[0])
 
 
     def tearDown(self):
@@ -258,7 +258,6 @@ class Test_3_all_messages_DB(unittest.TestCase):
                 user.delete(curs)  #on delete cascade usuwa tez messages
                 cls.connection.commit()
         cls.connection.close()
-
 
 
 
